@@ -1,0 +1,96 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f2f5;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+}
+
+footer {
+    margin-top: auto;
+    padding: 1rem 0;
+    background-color: #fff;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.card {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: 600;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+}
+
+.results-area {
+    background-color: #f8fafc;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-family: 'Roboto Mono', monospace;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+}
+
+textarea, input {
+    font-family: 'Roboto Mono', monospace;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.15);
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+textarea:focus, input:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    outline: none;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+#email-section .card-header {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    color: white;
+}
+
+#json-section .card-header {
+    background: linear-gradient(135deg, #4cc9a0, #1a8a60);
+    color: white;
+}
+
+#pdf-section .card-header {
+    background: linear-gradient(135deg, #f72585, #b5179e);
+    color: white;
+}
+
+#history-section .card-header {
+    background: linear-gradient(135deg, #4cc9f0, #3a86ff);
+    color: white;
+}

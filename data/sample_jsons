@@ -1,0 +1,33 @@
+{
+  "sample_json_1": {
+    "id": 1,
+    "name": "Sample JSON 1",
+    "description": "This is a sample JSON object for testing purposes.",
+    "data": {
+      "field1": "value1",
+      "field2": "value2",
+      "field3": "value3"
+    }
+  },
+  "sample_json_2": {
+    "id": 2,
+    "name": "Sample JSON 2",
+    "description": "This is another sample JSON object for testing.",
+    "data": {
+      "fieldA": "valueA",
+      "fieldB": "valueB",
+      "fieldC": "valueC"
+    }
+  },
+  "sample_json_3": {
+    "id": 3,
+    "name": "Sample JSON 3",
+    "description": "This JSON object contains additional fields.",
+    "data": {
+      "fieldX": "valueX",
+      "fieldY": "valueY",
+      "fieldZ": "valueZ",
+      "extraField": "extraValue"
+    }
+  }
+}
