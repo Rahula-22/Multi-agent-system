@@ -108,17 +108,6 @@ The system accepts the following input formats:
    ```
 3. Register the agent in `main.py`
 
-### Testing
-Run the unit tests to ensure your changes don't break existing functionality:
-```
-pytest tests/
-```
-
-### Code Style
-Follow PEP 8 guidelines and use the provided linting configuration:
-```
-flake8 .
-```
 
 ## Troubleshooting
 ### Common Issues
@@ -126,20 +115,11 @@ flake8 .
 - **Memory overflow**: Adjust the memory limits in the configuration
 - **Format not recognized**: Ensure the input format matches one of the supported types
 
-### Logging
-Check the logs for detailed error information:
-```
-tail -f logs/app.log
-```
 
 ## API Reference
 For detailed API documentation, visit:
 ```
 http://localhost:8000/docs
-```
-or
-```
-http://localhost:8000/redoc
 ```
 
 ## Contributing
@@ -154,6 +134,3 @@ Contributions are welcome! Please submit a pull request or open an issue for any
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-## Acknowledgments
-- Thanks to all contributors who have helped shape this project
-- Special thanks to the open-source libraries that made this possible
