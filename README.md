@@ -48,7 +48,7 @@ The project is organized into several directories and files, each serving a spec
 ## Setup Instructions
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/Rahula-22/Multi-agent-system.git
    cd multi-agent-system
    ```
 
