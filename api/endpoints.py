@@ -374,6 +374,69 @@ async def define_action_chain(chain_input: ActionChainInput):
         return {"success": True, "chain_id": chain_input.chain_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    @app.post("/process-email", response_model=Dict[str, Any])
+    async def process_email(request: Request):
+        """Process an uploaded email document and trigger appropriate actions"""
+        data = await request.json()
+        email_content = data.get("content", "")
+
+        conversation_id = memory_store.generate_conversation_id()
+
+        classifier_agent = ClassifierAgent(memory_store=memory_store)
+        classification = classifier_agent.classify_format_intent(email_content)
+        
+        memory_store.add_classification(classification)
+
+        metadata = {
+            "conversation_id": conversation_id,
+            "source": "api",
+            "format_type": classification["format"],
+            "intent": classification["intent"],
+            "timestamp": memory_store.get_timestamp()
+        }
+        memory_store.store_metadata(metadata)
+        
+        email_agent = EmailParserAgent()
+        email_result = email_agent.process(email_content)
+
+        memory_store.store_extraction(conversation_id, "email_agent", email_result)
+
+        combined_result = {
+            "format": classification["format"],
+            "intent": classification["intent"],
+            "processed_data": email_result,
+            "conversation_id": conversation_id
+        }
+        
+        alerts = alert_system.check_alerts(combined_result)
+        if alerts:
+            for alert in alerts:
+                memory_store.store_alert(conversation_id, alert)
+        
+        action_result = action_router.route_action(conversation_id, combined_result)
+        
+        chain_results = action_chain.evaluate(combined_result)
+        
+        summary = summary_generator.generate_summary(combined_result)
+
+        final_result = {
+            "format_type": classification["format"],
+            "intent": classification["intent"],
+            "email_data": email_result,
+            "alerts": alerts,
+            "action_taken": action_result,
+            "chain_actions": chain_results,
+            "summary": summary
+        }
+        memory_store.store_result(conversation_id, final_result)
+        
+        return {
+            "success": True,
+            "conversation_id": conversation_id,
+            "classification": classification,
+            "result": final_result
+        }
 
 if __name__ == "__main__":
     uvicorn.run("api.endpoints:app", host="0.0.0.0", port=8000, reload=True)
