@@ -5,6 +5,14 @@
     "email": "jane.smith@example.com",
     "subscription": "premium"
   },
+  "order_id": "ORD-7890",
+  "items": [
+    {"product_id": "P001", "name": "Widget X", "quantity": 2, "price": 19.99},
+    {"product_id": "P002", "name": "Gadget Y", "quantity": 1, "price": 34.50}
+  ],
+  "total_amount": 74.48,
+  "currency": "USD",
+  "delivery_date": "2025-06-15",
   "order": {
     "order_id": "ORD-7890",
     "items": [
