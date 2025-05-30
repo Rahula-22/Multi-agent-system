@@ -103,7 +103,8 @@ class ActionRouter:
                     "type": "escalate_issue",
                     "target": "crm",
                     "priority": "high",
-                    "description": "Customer complaint requires attention"
+                    "description": "Customer complaint requires attention",
+                    "endpoint": "/crm/escalate"
                 }
             
             # Check email urgency and tone
@@ -112,7 +113,8 @@ class ActionRouter:
                     "type": "escalate_issue",
                     "target": "crm",
                     "priority": "high",
-                    "description": f"Urgent email: {data.get('subject', 'No subject')}"
+                    "description": f"Urgent email: {data.get('subject', 'No subject')}",
+                    "endpoint": "/crm/escalate"
                 }
             
             if "tone" in data and data["tone"] in ["escalation", "threatening"]:
@@ -120,9 +122,10 @@ class ActionRouter:
                     "type": "escalate_issue",
                     "target": "crm",
                     "priority": "high",
-                    "description": f"Customer escalation: {data.get('subject', 'No subject')}"
+                    "description": f"Customer escalation: {data.get('subject', 'No subject')}",
+                    "endpoint": "/crm/escalate"
                 }
-                
+
             # For other emails
             return {
                 "type": "create_ticket",

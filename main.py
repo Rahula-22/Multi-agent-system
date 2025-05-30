@@ -37,13 +37,11 @@ async def index(request: Request):
 
 @app.on_event("startup")
 async def startup_event():
-    # Register default actions
     register_default_actions(action_chain)
-    
+
     global action_router
     action_router = ActionRouter(memory_store=memory_store, simulate=True)
-    
-    # Initialize API client
+
     global api_client
     api_client = APIClient(simulate=True)
     
