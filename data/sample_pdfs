@@ -1,1 +1,7 @@
-# Just a folder
+### Sample PDF Input
+The system can process PDF documents containing:
+- Invoices with line items and totals
+- Forms with fillable fields
+- Reports with tables and structured data
+- Contracts with key clauses and signatures
+```

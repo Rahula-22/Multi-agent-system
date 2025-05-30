@@ -1,33 +1,22 @@
 {
-  "sample_json_1": {
-    "id": 1,
-    "name": "Sample JSON 1",
-    "description": "This is a sample JSON object for testing purposes.",
-    "data": {
-      "field1": "value1",
-      "field2": "value2",
-      "field3": "value3"
-    }
+  "customer": {
+    "id": "C12345",
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "subscription": "premium"
   },
-  "sample_json_2": {
-    "id": 2,
-    "name": "Sample JSON 2",
-    "description": "This is another sample JSON object for testing.",
-    "data": {
-      "fieldA": "valueA",
-      "fieldB": "valueB",
-      "fieldC": "valueC"
-    }
-  },
-  "sample_json_3": {
-    "id": 3,
-    "name": "Sample JSON 3",
-    "description": "This JSON object contains additional fields.",
-    "data": {
-      "fieldX": "valueX",
-      "fieldY": "valueY",
-      "fieldZ": "valueZ",
-      "extraField": "extraValue"
+  "order": {
+    "order_id": "ORD-7890",
+    "items": [
+      {"product_id": "P001", "name": "Widget X", "quantity": 2, "price": 19.99},
+      {"product_id": "P002", "name": "Gadget Y", "quantity": 1, "price": 34.50}
+    ],
+    "total": 74.48,
+    "shipping_address": {
+      "street": "123 Main St",
+      "city": "Anytown",
+      "state": "CA",
+      "zip": "12345"
     }
   }
 }

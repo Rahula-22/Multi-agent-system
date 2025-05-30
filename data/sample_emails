@@ -1,18 +1,17 @@
-# Sample Emails
+### Sample Email Input
+```
+From: john.doe@example.com
+To: support@company.com
+Subject: Invoice Request #INV-2023-04-15
 
-## Email 1
-From: john.smith@example.com
-To: sarah.jones@example.com
-Date: 2023-06-15
-Subject: Quarterly Report Review
+Hello Support Team,
 
-Hi Sarah,
-I've reviewed the quarterly report and have a few comments. Could we schedule a meeting tomorrow to discuss the financial projections? I think section 3.2 needs more detail.
+I would like to request a copy of my invoice for order #ORD-7890 
+placed on April 10, 2023.
 
-Best regards,
-John
+My customer ID is C12345.
 
-## Email 2
-From: marketing@techcompany.com
-To: alex.williams@example.com
-Date: 2023-06-16
+Thanks,
+John Doe
+Phone: (555) 123-4567
+```

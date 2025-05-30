@@ -3,6 +3,40 @@
 ## Overview
 This project implements a multi-agent AI system designed to intelligently classify and route data inputs in various formats (PDF, JSON, Email) to specialized agents for extraction. The system maintains context to support downstream chaining and audits.
 
+## Architecture
+The system follows a hierarchical architecture with a classifier agent at the top:
+
+1. **Input Processing**: All inputs are first processed by the Classifier Agent
+2. **Classification**: The input is analyzed for format and intent
+3. **Routing**: Data is routed to specialized agents based on classification
+4. **Extraction**: Specialized agents extract structured data from their assigned formats
+5. **Memory Storage**: Extracted data and context are stored in shared memory
+6. **Result Delivery**: Processed results are returned through the API
+
+### Agent Logic
+- **Classifier Agent**: Uses content analysis and metadata to determine input type. Implements a multi-stage classification pipeline:
+  1. Format detection (MIME type, headers, structural analysis)
+  2. Intent analysis (searching for key patterns that indicate purpose)
+  3. Route selection (mapping to appropriate specialized agent)
+
+- **JSON Agent**: Processes structured JSON data through:
+  1. Schema validation
+  2. Normalization
+  3. Field extraction based on configurable templates
+  4. Transformation to internal format
+
+- **Email Agent**: Parses email content through:
+  1. Header extraction (From, To, Subject, Date)
+  2. Body parsing (text/html)
+  3. Attachment handling
+  4. Named entity recognition for key information
+
+- **PDF Agent**: Handles document processing through:
+  1. Text extraction
+  2. Table recognition
+  3. Form field identification
+  4. Structure preservation
+
 ## Project Structure
 The project is organized into several directories and files, each serving a specific purpose:
 
@@ -96,6 +130,65 @@ The system accepts the following input formats:
 - **Shared Memory**: Maintains context across agent interactions
 - **MCP (Model Context Protocol)**: Facilitates structured communication between agents
 
+## Sample Inputs are included in data folder and output processed is given below
+After processing, the system returns structured data like:
+
+```json
+{
+  "task_id": "task_789abc",
+  "status": "completed",
+  "input_type": "json",
+  "processing_time": "0.87s",
+  "extracted_data": {
+    "customer_id": "C12345",
+    "customer_name": "Jane Smith",
+    "order_id": "ORD-7890",
+    "order_total": 74.48,
+    "items_count": 2,
+    "shipping_zip": "12345"
+  },
+  "confidence_score": 0.95,
+  "memory_reference": "mem_456def"
+}
+```
+
+## System Workflow Diagram
+
+```
+┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │
+│    Input Data   │────▶│  Classifier     │
+│  (JSON/PDF/Email)│     │     Agent      │
+│                 │     │                 │
+└─────────────────┘     └────────┬────────┘
+                                 │
+                                 ▼
+          ┌────────────────────────────────────┐
+          │                                    │
+          ▼                                    ▼
+┌─────────────────┐     ┌─────────────────┐    ┌─────────────────┐
+│                 │     │                 │    │                 │
+│   JSON Agent    │     │   Email Agent   │    │    PDF Agent    │
+│                 │     │                 │    │                 │
+└────────┬────────┘     └────────┬────────┘    └────────┬────────┘
+         │                       │                      │
+         └───────────────────────┼──────────────────────┘
+                                 │
+                                 ▼
+                       ┌─────────────────┐
+                       │                 │
+                       │ Shared Memory   │
+                       │                 │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │                 │
+                       │   API Response  │
+                       │                 │
+                       └─────────────────┘
+```
+
 ## Development Guide
 ### Creating a New Agent
 1. Inherit from the BaseAgent class in `agents/base_agent.py`
@@ -121,16 +214,4 @@ For detailed API documentation, visit:
 ```
 http://localhost:8000/docs
 ```
-
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
 
