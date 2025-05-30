@@ -35,6 +35,7 @@ class AlertSystem:
         }
         self.alerts_history = []
         
+
     def check_alerts(self, data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
         Check if the processed data triggers any alerts.
@@ -51,14 +52,13 @@ class AlertSystem:
             try:
                 if rule["condition"](data):
                     alert = {
-                        "rule_id": rule_id,
+                        "id": rule_id,
                         "message": rule["message"],
                         "level": rule["level"],
                         "timestamp": datetime.datetime.now().isoformat(),
-                        "data_reference": {
-                            "format": data.get("format"),
-                            "intent": data.get("intent"),
-                            "conversation_id": data.get("conversation_id")
+                        "data": {
+                            "format": data.get("format", "Unknown"),
+                            "intent": data.get("intent", "Unknown")
                         }
                     }
                     triggered_alerts.append(alert)
