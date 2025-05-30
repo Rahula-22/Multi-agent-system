@@ -48,7 +48,7 @@ The project is organized into several directories and files, each serving a spec
 ## Setup Instructions
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/Rahula-22/Multi-agent-system.git
    cd multi-agent-system
    ```
 
@@ -90,30 +90,6 @@ The system accepts the following input formats:
 - **Email**: Raw email content or .eml files
 - **PDF**: Document files containing text and structured data
 
-### Output Format
-Results are returned in a standardized JSON format:
-```json
-{
-  "task_id": "task_123456",
-  "status": "completed",
-  "agent_used": "json_agent",
-  "extracted_data": {
-    "field1": "value1",
-    "field2": "value2"
-  },
-  "confidence_score": 0.95,
-  "processing_time": "0.234s"
-}
-```
-
-## Architecture
-### Agent Communication Flow
-```
-Input Data → Classifier Agent → Specialized Agent → Shared Memory
-                      ↓                  ↓
-                 Metadata           Extracted Data
-```
-
 ### Components Interaction
 - **Classifier Agent**: Entry point that analyzes input and directs to specialized agents
 - **Specialized Agents**: Process specific data formats and extract structured information
@@ -132,17 +108,6 @@ Input Data → Classifier Agent → Specialized Agent → Shared Memory
    ```
 3. Register the agent in `main.py`
 
-### Testing
-Run the unit tests to ensure your changes don't break existing functionality:
-```
-pytest tests/
-```
-
-### Code Style
-Follow PEP 8 guidelines and use the provided linting configuration:
-```
-flake8 .
-```
 
 ## Troubleshooting
 ### Common Issues
@@ -150,20 +115,11 @@ flake8 .
 - **Memory overflow**: Adjust the memory limits in the configuration
 - **Format not recognized**: Ensure the input format matches one of the supported types
 
-### Logging
-Check the logs for detailed error information:
-```
-tail -f logs/app.log
-```
 
 ## API Reference
 For detailed API documentation, visit:
 ```
 http://localhost:8000/docs
-```
-or
-```
-http://localhost:8000/redoc
 ```
 
 ## Contributing
@@ -178,6 +134,3 @@ Contributions are welcome! Please submit a pull request or open an issue for any
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-## Acknowledgments
-- Thanks to all contributors who have helped shape this project
-- Special thanks to the open-source libraries that made this possible
