@@ -150,44 +150,6 @@ After processing, the system returns structured data like:
   "confidence_score": 0.95,
   "memory_reference": "mem_456def"
 }
-```
-
-## System Workflow Diagram
-
-```
-┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │
-│    Input Data   │────▶│  Classifier     │
-│  (JSON/PDF/Email)│     │     Agent      │
-│                 │     │                 │
-└─────────────────┘     └────────┬────────┘
-                                 │
-                                 ▼
-          ┌────────────────────────────────────┐
-          │                                    │
-          ▼                                    ▼
-┌─────────────────┐     ┌─────────────────┐    ┌─────────────────┐
-│                 │     │                 │    │                 │
-│   JSON Agent    │     │   Email Agent   │    │    PDF Agent    │
-│                 │     │                 │    │                 │
-└────────┬────────┘     └────────┬────────┘    └────────┬────────┘
-         │                       │                      │
-         └───────────────────────┼──────────────────────┘
-                                 │
-                                 ▼
-                       ┌─────────────────┐
-                       │                 │
-                       │ Shared Memory   │
-                       │                 │
-                       └────────┬────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │                 │
-                       │   API Response  │
-                       │                 │
-                       └─────────────────┘
-```
 
 ## Development Guide
 ### Creating a New Agent
