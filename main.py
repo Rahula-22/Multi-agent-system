@@ -10,6 +10,8 @@ from memory.memory_store import MemoryStore
 from utils.alert_system import AlertSystem
 from utils.summary_generator import SummaryGenerator
 from mcp.action_chain import ActionChain, register_default_actions
+from mcp.action_router import ActionRouter
+from utils.api_client import APIClient
 
 app = FastAPI(title="Multi-Agent AI System Dashboard")
 
@@ -37,6 +39,13 @@ async def index(request: Request):
 async def startup_event():
     # Register default actions
     register_default_actions(action_chain)
+    
+    global action_router
+    action_router = ActionRouter(memory_store=memory_store, simulate=True)
+    
+    # Initialize API client
+    global api_client
+    api_client = APIClient(simulate=True)
     
     # Define some default action chains
     action_chain.define_chain(
