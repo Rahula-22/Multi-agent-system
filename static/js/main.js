@@ -48,6 +48,16 @@ document.addEventListener('DOMContentLoaded', function() {
             formatElement.textContent = data.format || 'Unknown';
             intentElement.textContent = data.processed_data?.intent || data.intent || 'Unknown';
             
+            // Display alerts if available
+            if (data.alerts && data.alerts.length > 0) {
+                displayAlerts(data.alerts);
+            }
+            
+            // Display summary if available
+            if (data.summary) {
+                displaySummary(data.summary);
+            }
+            
             // Display the full results
             resultsElement.textContent = JSON.stringify(data, null, 2);
             
@@ -84,16 +94,88 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
+            // Display summary if available
+            if (data.summary) {
+                displaySummary(data.summary, 'history-summary');
+            }
+            
+            // Display alerts if available
+            if (data.alerts && data.alerts.length > 0) {
+                displayAlerts(data.alerts, 'history-alerts');
+            }
+            
             resultsElement.textContent = JSON.stringify(data, null, 2);
         })
         .catch(error => {
             resultsElement.textContent = 'Error: ' + error.message;
         });
     });
-        
-        // Load last conversation ID if available
-        const lastConversationId = localStorage.getItem('lastConversationId');
-        if (lastConversationId) {
-            document.getElementById('conversation-id').value = lastConversationId;
+    
+    // Load last conversation ID if available
+    const lastConversationId = localStorage.getItem('lastConversationId');
+    if (lastConversationId) {
+        document.getElementById('conversation-id').value = lastConversationId;
+    }
+    
+    // Function to display alerts
+    function displayAlerts(alerts, containerId = 'alerts-container') {
+        // Create alerts container if it doesn't exist
+        let alertsContainer = document.getElementById(containerId);
+        if (!alertsContainer) {
+            alertsContainer = document.createElement('div');
+            alertsContainer.id = containerId;
+            alertsContainer.className = 'alerts-container mt-3';
+            
+            // Insert after results
+            const resultsContainer = document.getElementById('results').parentNode;
+            resultsContainer.parentNode.insertBefore(alertsContainer, resultsContainer.nextSibling);
         }
-    });
+        
+        // Clear previous alerts
+        alertsContainer.innerHTML = '<h6>Alerts:</h6>';
+        
+        // Add each alert
+        alerts.forEach(alert => {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${getAlertClass(alert.level)}`;
+            alertDiv.textContent = alert.message;
+            alertsContainer.appendChild(alertDiv);
+        });
+    }
+    
+    // Function to display summary
+    function displaySummary(summary, containerId = 'summary-container') {
+        // Create summary container if it doesn't exist
+        let summaryContainer = document.getElementById(containerId);
+        if (!summaryContainer) {
+            summaryContainer = document.createElement('div');
+            summaryContainer.id = containerId;
+            summaryContainer.className = 'summary-container mt-3 p-3 bg-light rounded';
+            
+            // Insert before full results
+            const resultsContainer = document.getElementById('results').parentNode;
+            resultsContainer.parentNode.insertBefore(summaryContainer, resultsContainer);
+        }
+        
+        // Display summary
+        summaryContainer.innerHTML = '<h6>Summary:</h6>';
+        const summaryPre = document.createElement('pre');
+        summaryPre.className = 'summary-text mb-0';
+        summaryPre.textContent = summary;
+        summaryContainer.appendChild(summaryPre);
+    }
+    
+    // Helper function to get Bootstrap alert class
+    function getAlertClass(level) {
+        switch (level.toLowerCase()) {
+            case 'high':
+                return 'alert-danger';
+            case 'medium':
+                return 'alert-warning';
+            case 'low':
+                return 'alert-info';
+            default:
+                return 'alert-secondary';
+        }
+    }
+});

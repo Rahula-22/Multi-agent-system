@@ -9,6 +9,9 @@ import sqlite3
 
 from agents.classifier_agent import ClassifierAgent
 from memory.memory_store import MemoryStore
+from utils.alert_system import AlertSystem
+from utils.summary_generator import SummaryGenerator
+from mcp.action_chain import ActionChain, register_default_actions
 
 # Models
 class ProcessInput(BaseModel):
@@ -24,10 +27,47 @@ class JsonInput(BaseModel):
     data: Dict[str, Any]
     conversation_id: Optional[str] = None
 
+class AlertRule(BaseModel):
+    rule_id: str
+    message: str
+    level: str = "medium"
+    condition_json: Dict[str, Any]
+
+class ActionChainInput(BaseModel):
+    chain_id: str
+    conditions: List[Dict[str, Any]]
+    actions: List[str]
+
 # Initialize app and dependencies
 app = FastAPI(title="Multi-Agent AI System")
 memory_store = MemoryStore()
 classifier = ClassifierAgent(memory_store)
+alert_system = AlertSystem()
+summary_generator = SummaryGenerator()
+action_chain = ActionChain()
+register_default_actions(action_chain)
+
+# Define some default action chains
+action_chain.define_chain(
+    "urgent_email_chain",
+    [{"field": "format", "operator": "eq", "value": "Email"}, 
+     {"field": "processed_data.urgency", "operator": "eq", "value": "High"}],
+    ["email_notification", "flag_for_review"]
+)
+
+action_chain.define_chain(
+    "high_value_order_chain",
+    [{"field": "format", "operator": "eq", "value": "JSON"}, 
+     {"field": "processed_data.flowbit_data.total_amount", "operator": "gt", "value": 1000}],
+    ["add_to_crm", "email_notification"]
+)
+
+action_chain.define_chain(
+    "regulation_document_chain",
+    [{"field": "format", "operator": "eq", "value": "PDF"}, 
+     {"field": "intent", "operator": "eq", "value": "Regulation"}],
+    ["compliance_report", "flag_for_review"]
+)
 
 # Utility functions
 def find_related_inputs(memory_store, conversation_id: str) -> List[str]:
@@ -192,6 +232,20 @@ async def process_any(
             merged_result = memory_store.merge_results(conversation_id)
             if merged_result:
                 result["merged_data"] = merged_result
+        
+        # Generate summary
+        summary = summary_generator.generate_summary(result)
+        result["summary"] = summary["summary"]
+        
+        # Check for alerts
+        alerts = alert_system.check_alerts(result)
+        if alerts:
+            result["alerts"] = alerts
+        
+        # Run action chains
+        action_results = action_chain.process(result)
+        if action_results:
+            result["actions"] = action_results
                 
         result["conversation_id"] = conversation_id
                 
@@ -209,6 +263,17 @@ async def get_simplified_conversation_history(conversation_id: str):
             "history": history
         }
         simplified = simplify_conversation_history(history_data)
+        
+        # Add conversation summary
+        if simplified.get("events"):
+            summary = summary_generator.generate_conversation_summary(simplified["events"])
+            simplified["summary"] = summary
+        
+        # Include alerts for this conversation
+        alerts = alert_system.get_alerts_for_conversation(conversation_id)
+        if alerts:
+            simplified["alerts"] = alerts
+            
         return simplified
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -235,24 +300,78 @@ async def get_conversation_result(conversation_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/process/pdf")
-async def process_pdf(
-    file: UploadFile = File(...),
-    conversation_id: Optional[str] = Form(None)
-):
-    """Process a PDF file and extract information."""
+@app.get("/summary/{conversation_id}")
+async def get_conversation_summary(conversation_id: str):
+    """Get a summary for the conversation."""
     try:
-        content = await file.read()
+        history = memory_store.get_conversation_history(conversation_id)
+        history_data = {
+            "conversation_id": conversation_id,
+            "history": history
+        }
+        simplified = simplify_conversation_history(history_data)
         
-        _, ext = os.path.splitext(file.filename)
-        if ext.lower() != '.pdf':
+        if not simplified.get("events"):
+            raise HTTPException(status_code=404, detail="No events found for conversation")
+            
+        summary = summary_generator.generate_conversation_summary(simplified["events"])
+        
+        return {
+            "conversation_id": conversation_id,
+            "summary": summary
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/alerts")
+async def get_recent_alerts(limit: int = 10):
+    """Get recent alerts across all conversations."""
+    try:
+        alerts = alert_system.get_recent_alerts(limit)
+        return {"alerts": alerts}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/alerts/rule")
+async def add_alert_rule(rule: AlertRule):
+    """Add a custom alert rule."""
+    try:
+        # Convert JSON condition to a lambda function
+        condition_func = eval(f"lambda data: {rule.condition_json.get('code', 'False')}")
+        
+        success = alert_system.add_custom_rule(
+            rule.rule_id,
+            condition_func,
+            rule.message,
+            rule.level
+        )
+        
+        if not success:
+            raise HTTPException(status_code=400, detail=f"Rule ID '{rule.rule_id}' already exists")
+            
+        return {"success": True, "rule_id": rule.rule_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/actions/chain")
+async def define_action_chain(chain_input: ActionChainInput):
+    """Define a new action chain."""
+    try:
+        success = action_chain.define_chain(
+            chain_input.chain_id,
+            chain_input.conditions,
+            chain_input.actions
+        )
+        
+        if not success:
             raise HTTPException(
                 status_code=400, 
-                detail="Invalid file type. Only PDF files are supported."
+                detail=f"Chain ID '{chain_input.chain_id}' already exists or invalid actions"
             )
-        
-        result = classifier.route_to_agent(content, conversation_id)
-        return result
+            
+        return {"success": True, "chain_id": chain_input.chain_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
