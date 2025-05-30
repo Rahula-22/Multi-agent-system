@@ -78,7 +78,7 @@ class ClassifierAgent(BaseAgent):
                 "json_fields": ["risk_score", "fraud_indicators", "suspicious_activity"],
                 "examples": [
                     "We have detected suspicious activity on your account.",
-                    {"transaction": {"risk_score": 0.85, "anomaly": true, "ip_mismatch": true}}
+                    {"transaction": {"risk_score": 0.85, "anomaly": True, "ip_mismatch": True}}
                 ]
             }
         }
@@ -226,23 +226,23 @@ class ClassifierAgent(BaseAgent):
         for intent, schema in self.intent_schemas.items():
             score = 0
             
-            # Keyword matching
+            # Apply keyword matching from schema
             for keyword in schema["keywords"]:
                 if keyword.lower() in text_data:
                     score += 1
             
-            # JSON field matching
+            # Apply field matching for JSON with higher weight
             if format_type == "JSON" and json_data:
                 flat_json = self._flatten_json(json_data)
                 for field in schema["json_fields"]:
                     if any(field.lower() in key.lower() for key in flat_json.keys()):
-                        score += 2  # Higher weight for field matches
+                        score += 2
             
-            # Special case for PDF format and Regulation intent
+            # Apply format-specific biases
             if format_type == "PDF" and intent == "Regulation":
-                score += 2  # Bias towards regulation for PDF documents
+                score += 2
             
-            # Special case for detecting Fraud Risk
+            # Enhanced scoring for Fraud Risk detection
             if intent == "Fraud Risk":
                 # Check for fraud indicators in JSON data
                 if format_type == "JSON" and json_data:
