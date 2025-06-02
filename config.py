@@ -10,10 +10,10 @@ class Config:
     LOG_FILE = os.getenv("LOG_FILE", "app.log")
     
     # Memory configuration
-    MEMORY_TYPE = os.getenv("MEMORY_TYPE", "Redis")  # Options: Redis, SQLite, In-Memory
+    MEMORY_TYPE = os.getenv("MEMORY_TYPE", "Redis") 
     MEMORY_HOST = os.getenv("MEMORY_HOST", "localhost")
-    MEMORY_PORT = os.getenv("MEMORY_PORT", 6379)  # Default Redis port
-    MEMORY_DB = os.getenv("MEMORY_DB", 0)  # Default Redis DB
+    MEMORY_PORT = os.getenv("MEMORY_PORT", 6379) 
+    MEMORY_DB = os.getenv("MEMORY_DB", 0)  
 
     # API configuration
     API_HOST = os.getenv("API_HOST", "0.0.0.0")

@@ -150,6 +150,70 @@ After processing, the system returns structured data like:
   "confidence_score": 0.95,
   "memory_reference": "mem_456def"
 }
+```
+
+## Output Logs
+The system generates detailed logs during processing to help with debugging and auditing. Example output log:
+
+```
+2025-06-01 14:32:18 [INFO] Classifier: Detected format: JSON (confidence: 0.97)
+2025-06-01 14:32:19 [INFO] JSON Agent: Starting processing of document doc_567
+2025-06-01 14:32:20 [INFO] System: Processing complete in 0.87s
+```
+
+## Processing Results
+### Screenshots and Post-Action Outputs
+
+Below are visual representations of the system in action:
+
+![Agent Classification Process](docs/images/agent_classification.png)
+*Figure 1: The Classifier Agent analyzing input and determining its type*
+
+![PDF Processing Example](docs/images/pdf_processing.png)
+*Figure 2: PDF Agent extracting structured information from a document*
+
+![Email Processing Results](docs/images/email_results.png)
+*Figure 3: Results of processing an email through the Email Agent*
+
+All processed outputs are stored in the `/results` directory with both raw and formatted versions:
+
+- `/results/raw/`: Contains the complete output data
+- `/results/formatted/`: Contains human-readable formatted reports
+
+## Agent Flow and Communication Diagram
+
+The system follows a hierarchical processing flow with bidirectional communication between agents:
+
+```
+┌─────────────────┐     ┌───────────────────┐
+│                 │     │                   │
+│  Input Source   ├────►│  Classifier Agent │
+│                 │     │                   │
+└─────────────────┘     └──────┬─────┬──────┘
+                               │     │     │
+                 ┌─────────────┘     │     └──────────────┐
+                 │                   │                    │
+        ┌────────▼───────┐  ┌────────▼───────┐   ┌────────▼───────┐
+        │                │  │                │   │                │
+        │   JSON Agent   │  │   PDF Agent    │   │   Email Agent  │
+        │                │  │                │   │                │
+        └────────┬───────┘  └────────┬───────┘   └────────┬───────┘
+                 │                   │                    │
+                 │                   │                    │
+        ┌────────▼───────────────────▼────────────────────▼───────┐
+        │                                                         │
+        │                     Shared Memory                       │
+        │                                                         │
+        └─────────────────────────────────────────────────────────┘
+```
+*Figure 4: Multi-Agent System Architecture and Communication Flow*
+
+The diagram illustrates how data flows through the system:
+1. Input is received and passed to the Classifier Agent
+2. The Classifier determines the appropriate specialized agent
+3. The specialized agent processes the input and extracts data
+4. All agents read/write to the shared memory system
+5. Results are made available via the API
 
 ## Development Guide
 ### Creating a New Agent
