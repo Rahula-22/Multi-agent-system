@@ -103,20 +103,6 @@ The project is organized into several directories and files, each serving a spec
    ```
 
 ## Usage
-### API Endpoints
-- **POST /api/v1/process**: Upload data for processing
-  ```bash
-  # Example: Process a JSON file
-  curl -X POST -H "Content-Type: multipart/form-data" \
-    -F "file=@./data/sample_jsons/customer_data.json" \
-    -F "description=Customer information for processing" \
-    http://localhost:8000/api/v1/process
-  ```
-
-- **GET /api/v1/results/{task_id}**: Retrieve processing results
-  ```bash
-  curl http://localhost:8000/api/v1/results/task_123456
-  ```
 
 ### Input Formats
 The system accepts the following input formats:
